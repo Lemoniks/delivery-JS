@@ -25,6 +25,11 @@ let login = localStorage.getItem('user');
 function toggleModalAuth() {
   modalAuth.classList.toggle('is-open');
   loginInput.style.borderColor = '';
+  if (modalAuth.classList.contains('is-open')) {
+    disabledScroll();
+  } else {
+    enableScroll();
+  }
 }
 
 
@@ -47,6 +52,7 @@ function authorized() {
   userName.style.display = 'inline';
   buttonOut.style.display = 'block';
   buttonOut.addEventListener('click', logOut);
+  
 }
 function notAuthorized() {
   console.log('NOT authorized');
