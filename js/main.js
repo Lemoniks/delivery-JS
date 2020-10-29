@@ -1,5 +1,6 @@
 'use strict';
 
+
 // variables
 
 const cartButton = document.querySelector("#cart-button");
@@ -23,6 +24,12 @@ const cardsMenu = document.querySelector('.cards-menu');
 // authorized
 
 let login = localStorage.getItem('user');
+
+
+function validName(str) {
+  const RegName = /^[a-zA-Z][a-zA-Z0-9-_\.]{3,20}$/;
+  return RegName.test(str)
+}
 
 function toggleModal() {
   modal.classList.toggle("is-open");
@@ -65,7 +72,7 @@ function notAuthorized() {
 
   function logIn(event) {
     event.preventDefault();
-    if (loginInput.value.trim()) {
+    if (validName(loginInput.value)) {
       login = loginInput.value;
       localStorage.setItem('user', login);
       toggleModalAuth();
@@ -184,3 +191,18 @@ checkAuth();
 createCardRestaurant();
 createCardRestaurant();
 createCardRestaurant(); 
+
+
+// swiper - slider
+
+new Swiper('.swiper-container', {
+  sliderPerView: 1,
+  loop: true,
+  autoplay: true,
+  effect: 'flip',
+  grabCursor: true,
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  }
+});
