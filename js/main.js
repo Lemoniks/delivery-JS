@@ -23,6 +23,7 @@ const restaurantTitle = document.querySelector('.restaurant-title');
 const restaurantRating = document.querySelector('.rating');
 const restaurantPrice = document.querySelector('.price');
 const restaurantCategory = document.querySelector('.category');
+const inputSearch = document.querySelector('.input-search');
 
 
 // authorized
@@ -222,6 +223,49 @@ function init() {
   })
   
   checkAuth();
+
+
+  inputSearch.addEventListener('keypress', function(event) {
+    if (event.charCode === 13) {
+      const value = event.target.value;
+
+      if (!value) {
+        return;
+
+      }
+
+      getData('./db/partners.json').then(function(data){
+        return data.map(function(partner) {
+          return partner.products;
+        });
+      })
+      .then(function(linksProduct) {
+        cardsMenu.textContent = '';
+        linksProduct.forEach(function(link) {
+          getData(`./db/${link}`)
+          .then(function(data) {
+
+            const resultSearch = data.filter(function(item) {
+              const name = item.name.toLowerCase()
+              return name.includes(value.toLowerCase());
+            })
+            
+            containerPromo.classList.add('hide');
+            restaurants.classList.add('hide');
+            menu.classList.remove('hide');
+                
+            restaurantTitle.textContent = 'Search result:';
+            restaurantRating.textContent = '';
+            restaurantPrice.textContent = '';
+            restaurantCategory.textContent = '';
+            resultSearch.forEach(createCardGood);
+
+          })
+        })
+
+      })
+    }
+  })
   
   
   // swiper - slider
