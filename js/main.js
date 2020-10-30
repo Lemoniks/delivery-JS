@@ -19,6 +19,10 @@ const restaurants = document.querySelector('.restaurants');
 const menu = document.querySelector('.menu');
 const logo = document.querySelector('.logo');
 const cardsMenu = document.querySelector('.cards-menu');
+const restaurantTitle = document.querySelector('.restaurant-title');
+const restaurantRating = document.querySelector('.rating');
+const restaurantPrice = document.querySelector('.price');
+const restaurantCategory = document.querySelector('.category');
 
 
 // authorized
@@ -32,10 +36,7 @@ const getData = async function(url) {
   if (!response.ok) {
     throw new Error(`Error from addresses ${url}, status ${response.status}!`)
   }
-  return await response.json();
-
-
-
+  return await response.json()
 };
 
 getData('./db/partners.json');
@@ -124,8 +125,13 @@ function checkAuth() {
 // generation cards restaurants
 
 function createCardRestaurant({ image, kitchen, name, price, time_of_delivery:timeOfDelivery, stars, products }) {
+  const cardsRestaurant = document.createElement('a');
+  cardsRestaurant.className = 'card card-restaurant';
+  cardsRestaurant.products = products;
+  cardsRestaurant.info = { kitchen, name, price, stars };
+
+
   const card = `
-  <a class="card card-restaurant" data-products="${products}">
     <img src="${image}" alt="image" class="card-image"/>
     <div class="card-text">
       <div class="card-heading">
@@ -140,14 +146,14 @@ function createCardRestaurant({ image, kitchen, name, price, time_of_delivery:ti
         <div class="category">${kitchen}</div>
       </div>
     </div>
-  </a>
   `;
-  cardsRestaurants.insertAdjacentHTML('beforeend', card);
-}
+  cardsRestaurant.insertAdjacentHTML('beforeend', card);
+  cardsRestaurants.insertAdjacentElement('beforeend', cardsRestaurant);
 
-
+};
 
 function createCardGood({ description, id, image, name, price }) {
+  
   
   const card = document.createElement('div');
   card.className = 'card';
@@ -181,8 +187,17 @@ function openGoods(event) {
     containerPromo.classList.add('hide');
     restaurants.classList.add('hide');
     menu.classList.remove('hide');
-    getData(`./db/${restaurant.dataset.products}`).then(function(data){
+
+    const { name, kitchen, price, stars } = restaurant.info;
+
+    restaurantTitle.textContent = name;
+    restaurantRating.textContent = stars;
+    restaurantPrice.textContent = `От ${price} грн`;
+    restaurantCategory.textContent = kitchen;
+
+    getData(`./db/${restaurant.products}`).then(function(data){
       data.forEach(createCardGood);
+
     });
   } else {
     toggleModalAuth();
@@ -194,7 +209,6 @@ function openGoods(event) {
 function init() {
   getData('./db/partners.json').then(function(data){
     data.forEach(createCardRestaurant);
-  
   });
   
   cartButton.addEventListener("click", toggleModal);
