@@ -26,6 +26,7 @@ const restaurantCategory = document.querySelector('.category');
 const inputSearch = document.querySelector('.input-search');
 const modalBody = document.querySelector('.modal-body');
 const modalPrice = document.querySelector('.modal-pricetag');
+const buttonClearCart = document.querySelector('.clear-cart');
 
 const cart = [];
 
@@ -261,25 +262,24 @@ function renderCart() {
 }
 
 function changeCount(event) {
-  const target = event.taget;
+  const target = event.target;
 
-  if (target.classList.contains('counter-minus')) {
+  if (target.classList.contains('counter-button')) {
     const food = cart.find(function(item) {
       return item.id === target.dataset.id;
     });
-    food.count--;
+    if (target.classList.contains('counter-minus')) {
+      food.count--;
+      if (food.count === 0) {
+        const confirmed = confirm("Вы действительно хотите удалить позицию из корзины?");
+        if (confirmed) {
+          cart.splice(cart.indexOf(food), 1)
+        }
+      }
+    }
+    if (target.classList.contains('counter-plus')) food.count++;
     renderCart();
   }
-
-  if (target.classList.contains('counter-plus')) {
-    const food = cart.find(function(item) {
-      return item.id === target.dataset.id;
-    });
-    food.count++;
-    renderCart();
-  }
-
-
 }
 
 function init() {
@@ -291,6 +291,15 @@ function init() {
     renderCart();
     toggleModal();
   });
+
+  buttonClearCart.addEventListener('click', function() {
+    const confirmedCart = confirm("Вы действительно хотите удалить позицию из корзины?");
+    if (confirmedCart) {
+      cart.length = 0;
+      renderCart();
+
+    }
+  })
 
   modalBody.addEventListener('click', changeCount)
 
